@@ -7,13 +7,17 @@ import sqlite3
 import os
 from functools import wraps
 
+from flask_moment import Moment
+
+
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///poultry_farm.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-
+moment = Moment(app)
 # Database Models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -109,6 +109,9 @@
 
     <!-- 🔗 Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+
+    {{ moment.include_moment() }}
+
 </head>
 <body class="bg-gray-50 font-sans">
     <!-- Mobile menu overlay -->
@@ -243,8 +246,10 @@
         sidebarToggle?.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
             const mainContent = document.querySelector('.main-content');
+            const sidebarText = document.querySelector('.sidebar-text');
             if (sidebar.classList.contains('collapsed')) {
                 mainContent.style.marginLeft = '4rem';
+                sidebarText.style.display = 'hidden';
             } else {
                 mainContent.style.marginLeft = '16rem';
             }
