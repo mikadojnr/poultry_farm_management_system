@@ -1,0 +1,386 @@
+/* Custom CSS for Poultry Farm Management System */
+
+:root {
+    --primary-green: #4CAF50;
+    --secondary-green: #388E3C;
+    --light-green: #C8E6C9;
+    --dark-green: #2E7D32;
+    --brown: #8D6E63;
+    --soft-blue: #81C784;
+    --sidebar-width: 16rem;
+    --sidebar-collapsed-width: 4rem;
+    --transition-duration: 0.3s;
+    --shadow-light: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow-medium: 0 4px 8px rgba(0,0,0,0.15);
+    --shadow-heavy: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* Utility Classes */
+.bg-primary { background-color: var(--primary-green); }
+.bg-secondary { background-color: var(--secondary-green); }
+.bg-light-green { background-color: var(--light-green); }
+.bg-dark-green { background-color: var(--dark-green); }
+.text-primary { color: var(--primary-green); }
+.text-secondary { color: var(--secondary-green); }
+
+/* Gradient Backgrounds */
+.bg-gradient-green {
+    background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+}
+
+.bg-gradient-green-dark {
+    background: linear-gradient(135deg, var(--secondary-green), var(--dark-green));
+}
+
+/* Glass Effect */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-light);
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: var(--sidebar-width);
+    transition: width var(--transition-duration) ease,
+                transform var(--transition-duration) ease;
+    will-change: width, transform;
+    background: var(--primary-green);
+    background: linear-gradient(180deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+.sidebar.collapsed .sidebar-text {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-10px);
+}
+
+.sidebar.collapsed .nav-item {
+    justify-content: center;
+}
+
+.sidebar.collapsed .nav-item i {
+    margin-right: 0;
+}
+
+/* Sidebar Text Animation */
+.sidebar-text {
+    transition: opacity var(--transition-duration) ease,
+                visibility var(--transition-duration) ease,
+                transform var(--transition-duration) ease;
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+/* Navigation Items */
+.nav-item {
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.nav-item:hover::before {
+    left: 100%;
+}
+
+.nav-item:hover {
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 0.5rem;
+    transform: translateX(5px);
+}
+
+.nav-item.active {
+    background-color: rgba(255,255,255,0.2);
+    border-radius: 0.5rem;
+    border-left: 4px solid white;
+}
+
+.nav-item i {
+    transition: transform 0.2s ease;
+}
+
+.nav-item:hover i {
+    transform: scale(1.1);
+}
+
+/* Main Content */
+.main-content {
+    margin-left: var(--sidebar-width);
+    transition: margin-left var(--transition-duration) ease;
+    min-height: 100vh;
+    will-change: margin-left;
+}
+
+.main-content.collapsed {
+    margin-left: var(--sidebar-collapsed-width);
+}
+
+/* Card Animations */
+.card-hover {
+    transition: all var(--transition-duration) ease;
+    will-change: transform, box-shadow;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: var(--shadow-heavy);
+}
+
+/* Form Styles */
+.form-input {
+    transition: all var(--transition-duration) ease;
+    will-change: transform, box-shadow;
+}
+
+.form-input:focus {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    border-color: var(--primary-green);
+}
+
+.form-input:focus::placeholder {
+    transform: translateY(-2px);
+    opacity: 0.7;
+}
+
+/* Button Styles */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Loading States */
+.loading-spinner {
+    display: none;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading .loading-spinner {
+    display: inline-block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Notification Styles */
+.notification {
+    transform: translateX(100%);
+    transition: transform var(--transition-duration) ease;
+    box-shadow: var(--shadow-medium);
+    border-radius: 0.5rem;
+    backdrop-filter: blur(10px);
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification.hide {
+    transform: translateX(100%);
+}
+
+/* Chart Container */
+.chart-container {
+    position: relative;
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-light);
+    overflow: hidden;
+    transition: box-shadow var(--transition-duration) ease;
+}
+
+.chart-container:hover {
+    box-shadow: var(--shadow-medium);
+}
+
+/* Stats Cards */
+.stats-card {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-light);
+    transition: all var(--transition-duration) ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
+}
+
+.stats-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-medium);
+}
+
+/* Table Styles */
+.table-container {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-light);
+    overflow: hidden;
+}
+
+.table-row {
+    transition: background-color 0.2s ease;
+}
+
+.table-row:hover {
+    background-color: rgba(76, 175, 80, 0.05);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        z-index: 1000;
+        height: 100vh;
+        width: var(--sidebar-width);
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+    }
+    
+    .card-hover:hover {
+        transform: translateY(-2px) scale(1.01);
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-1px);
+    }
+}
+
+@media (max-width: 640px) {
+    .sidebar {
+        width: 100vw;
+    }
+    
+    .notification {
+        width: calc(100vw - 2rem);
+        margin: 0 1rem;
+    }
+}
+
+/* Scrollbar Styles */
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 2px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.5);
+}
+
+/* Print Styles */
+@media print {
+    .sidebar,
+    .mobile-overlay,
+    .notification {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus Styles */
+.nav-item:focus-visible,
+.form-input:focus-visible,
+.btn-primary:focus-visible {
+    outline: 2px solid var(--primary-green);
+    outline-offset: 2px;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .stats-card,
+    .chart-container,
+    .table-container {
+        background: #1f2937;
+        color: #f9fafb;
+    }
+    
+    .table-row:hover {
+        background-color: rgba(76, 175, 80, 0.1);
+    }
+}

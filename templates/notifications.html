@@ -1,0 +1,330 @@
+<!-- templates/notifications.html -->
+{% extends "base.html" %}
+{% block page_title %}Notifications{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Notifications</h1>
+                <p class="text-gray-600 mt-1">Stay updated on important farm activities</p>
+            </div>
+            
+            <div class="flex space-x-3">
+                <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-check mr-2"></i>
+                    Mark All Read
+                </button>
+                <button class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors">
+                    <i class="fas fa-trash mr-2"></i>
+                    Clear All
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Categories -->
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Notification Categories</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg">
+                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-syringe text-yellow-600"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-900">Health Alerts</p>
+                    <p class="text-xs text-gray-500">3 pending</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
+                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-seedling text-blue-600"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-900">Feed Alerts</p>
+                    <p class="text-xs text-gray-500">1 pending</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
+                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-chart-line text-green-600"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-900">Production</p>
+                    <p class="text-xs text-gray-500">2 updates</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg">
+                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-bell text-purple-600"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-900">General</p>
+                    <p class="text-xs text-gray-500">2 updates</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Recent Notifications</h2>
+        </div>
+        
+        <div class="divide-y divide-gray-200">
+            {% for notification in notifications %}
+            <div class="p-6 hover:bg-gray-50 transition-colors">
+                <div class="flex items-start space-x-4">
+                    <!-- Notification Icon -->
+                    <div class="flex-shrink-0">
+                        {% if notification.type == 'vaccination' %}
+                            <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-syringe text-yellow-600"></i>
+                            </div>
+                        {% elif notification.type == 'feed' %}
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-seedling text-blue-600"></i>
+                            </div>
+                        {% elif notification.type == 'health' %}
+                            <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-heart-pulse text-red-600"></i>
+                            </div>
+                        {% elif notification.type == 'production' %}
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-chart-line text-green-600"></i>
+                            </div>
+                        {% else %}
+                            <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-bell text-gray-600"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Notification Content -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm font-medium text-gray-900">
+                                {{ notification.message }}
+                            </p>
+                            <div class="flex items-center space-x-2">
+                                {% if notification.type == 'vaccination' %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                                        Urgent
+                                    </span>
+                                {% elif notification.type == 'feed' %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        Alert
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                        <i class="fas fa-bell mr-1"></i>
+                                        Info
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <p class="mt-1 text-sm text-gray-500">
+                            {{ moment(notification.date).fromNow() }}
+                        </p>
+                        
+                        <!-- Action Buttons -->
+                        <div class="mt-3 flex space-x-3">
+                            {% if notification.type == 'vaccination' %}
+                                <button class="text-sm text-yellow-600 hover:text-yellow-700 font-medium">
+                                    <i class="fas fa-calendar-plus mr-1"></i>
+                                    Schedule Treatment
+                                </button>
+                            {% elif notification.type == 'feed' %}
+                                <button class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                                    <i class="fas fa-shopping-cart mr-1"></i>
+                                    Order Feed
+                                </button>
+                            {% elif notification.type == 'health' %}
+                                <button class="text-sm text-red-600 hover:text-red-700 font-medium">
+                                    <i class="fas fa-stethoscope mr-1"></i>
+                                    Book Checkup
+                                </button>
+                            {% endif %}
+                            
+                            <button class="text-sm text-gray-600 hover:text-gray-700">
+                                <i class="fas fa-check mr-1"></i>
+                                Mark as Read
+                            </button>
+                            
+                            <button class="text-sm text-gray-600 hover:text-gray-700">
+                                <i class="fas fa-times mr-1"></i>
+                                Dismiss
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-bell-slash text-gray-400 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No notifications</h3>
+                <p class="text-gray-500">You're all caught up! Check back later for updates.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Notification Settings -->
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Notification Settings</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="text-sm font-medium text-gray-900 mb-3">Health Notifications</h3>
+                <div class="space-y-3">
+                    <label class="flex items-center">
+                        <input type="checkbox" checked class="rounded border-gray-300 text-yellow-600 shadow-sm focus:border-yellow-300 focus:ring focus:ring-yellow-200 focus:ring-opacity-50">
+                        <span class="ml-2 text-sm text-gray-700">Vaccination reminders</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" checked class="rounded border-gray-300 text-yellow-600 shadow-sm focus:border-yellow-300 focus:ring focus:ring-yellow-200 focus:ring-opacity-50">
+                        <span class="ml-2 text-sm text-gray-700">Health check alerts</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded border-gray-300 text-yellow-600 shadow-sm focus:border-yellow-300 focus:ring focus:ring-yellow-200 focus:ring-opacity-50">
+                        <span class="ml-2 text-sm text-gray-700">Mortality alerts</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="text-sm font-medium text-gray-900 mb-3">Production Notifications</h3>
+                <div class="space-y-3">
+                    <label class="flex items-center">
+                        <input type="checkbox" checked class="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50">
+                        <span class="ml-2 text-sm text-gray-700">Low production alerts</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50">
+                        <span class="ml-2 text-sm text-gray-700">Daily production reports</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" checked class="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50">
+                        <span class="ml-2 text-sm text-gray-700">Weekly summaries</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="text-sm font-medium text-gray-900 mb-3">Inventory Notifications</h3>
+                <div class="space-y-3">
+                    <label class="flex items-center">
+                        <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                        <span class="ml-2 text-sm text-gray-700">Low feed stock alerts</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                        <span class="ml-2 text-sm text-gray-700">Equipment maintenance</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="text-sm font-medium text-gray-900 mb-3">Financial Notifications</h3>
+                <div class="space-y-3">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded border-gray-300 text-purple-600 shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
+                        <span class="ml-2 text-sm text-gray-700">Monthly profit reports</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded border-gray-300 text-purple-600 shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
+                        <span class="ml-2 text-sm text-gray-700">Budget alerts</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-6 pt-6 border-t border-gray-200">
+            <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <i class="fas fa-save mr-2"></i>
+                Save Settings
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Notification interaction handlers
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mark all read functionality
+        const markAllReadBtn = document.querySelector('button:has(.fa-check)');
+        if (markAllReadBtn) {
+            markAllReadBtn.addEventListener('click', function() {
+                // Add your mark all read logic here
+                showToast('All notifications marked as read', 'success');
+            });
+        }
+        
+        // Clear all functionality  
+        const clearAllBtn = document.querySelector('button:has(.fa-trash)');
+        if (clearAllBtn) {
+            clearAllBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all notifications?')) {
+                    // Add your clear all logic here
+                    showToast('All notifications cleared', 'success');
+                }
+            });
+        }
+        
+        // Individual notification actions
+        const markReadBtns = document.querySelectorAll('button:has(.fa-check)');
+        markReadBtns.forEach(btn => {
+            if (!btn.textContent.includes('Mark All')) {
+                btn.addEventListener('click', function() {
+                    const notification = this.closest('.p-6');
+                    notification.style.opacity = '0.5';
+                    showToast('Notification marked as read', 'success');
+                });
+            }
+        });
+        
+        const dismissBtns = document.querySelectorAll('button:has(.fa-times)');
+        dismissBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const notification = this.closest('.p-6');
+                notification.style.transition = 'all 0.3s ease';
+                notification.style.transform = 'translateX(100%)';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+            });
+        });
+    });
+    
+    function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg text-white z-50 ${
+            type === 'success' ? 'bg-green-500' : 
+            type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+        }`;
+        toast.innerHTML = `
+            <div class="flex items-center justify-between">
+                <span>${message}</span>
+                <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+</script>
+{% endblock %}

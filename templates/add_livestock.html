@@ -1,0 +1,111 @@
+<!-- templates/add_livestock.html -->
+{% extends "base.html" %}
+{% block page_title %}Add Livestock{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-gray-900">Add New Livestock</h1>
+            <p class="text-gray-600 mt-1">Enter the details of your new bird</p>
+        </div>
+        
+        <form method="POST" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="livestock_id" class="block text-sm font-medium text-gray-700 mb-2">
+                        Livestock ID <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="livestock_id" name="livestock_id" required
+                           class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                           placeholder="e.g., PL-001">
+                </div>
+                
+                <div>
+                    <label for="breed" class="block text-sm font-medium text-gray-700 mb-2">
+                        Breed <span class="text-red-500">*</span>
+                    </label>
+                    <select id="breed" name="breed" required
+                            class="form-select w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                        <option value="">Select breed</option>
+                        <option value="Rhode Island Red">Rhode Island Red</option>
+                        <option value="Leghorn">Leghorn</option>
+                        <option value="Plymouth Rock">Plymouth Rock</option>
+                        <option value="Australorp">Australorp</option>
+                        <option value="Sussex">Sussex</option>
+                        <option value="Orpington">Orpington</option>
+                        <option value="Wyandotte">Wyandotte</option>
+                        <option value="Brahma">Brahma</option>
+                        <option value="Cochin">Cochin</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="age_weeks" class="block text-sm font-medium text-gray-700 mb-2">
+                        Age (weeks) <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" id="age_weeks" name="age_weeks" required min="0" max="200"
+                           class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                           placeholder="0">
+                </div>
+                
+                <div>
+                    <label for="weight" class="block text-sm font-medium text-gray-700 mb-2">
+                        Weight (kg)
+                    </label>
+                    <input type="number" id="weight" name="weight" step="0.1" min="0"
+                           class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                           placeholder="0.0">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="health_status" class="block text-sm font-medium text-gray-700 mb-2">
+                        Health Status
+                    </label>
+                    <select id="health_status" name="health_status"
+                            class="form-select w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                        <option value="healthy" selected>Healthy</option>
+                        <option value="sick">Sick</option>
+                        <option value="recovering">Recovering</option>
+                        <option value="quarantine">Quarantine</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="purchase_date" class="block text-sm font-medium text-gray-700 mb-2">
+                        Purchase Date
+                    </label>
+                    <input type="date" id="purchase_date" name="purchase_date" 
+                           value="{{ datetime.now().strftime('%Y-%m-%d') }}"
+                           class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                </div>
+            </div>
+            
+            <div>
+                <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">
+                    Additional Notes
+                </label>
+                <textarea id="notes" name="notes" rows="3"
+                          class="form-textarea w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                          placeholder="Any additional information about this livestock..."></textarea>
+            </div>
+            
+            <div class="flex justify-end space-x-4 pt-6">
+                <a href="{{ url_for('livestock') }}" 
+                   class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>
+                    Add Livestock
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

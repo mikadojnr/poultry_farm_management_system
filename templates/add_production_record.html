@@ -1,0 +1,182 @@
+<!-- templates/add_production_record.html -->
+{% extends "base.html" %}
+{% block page_title %}Add Production Record{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <!-- Header -->
+        <div class="flex items-center space-x-3 mb-6">
+            <a href="{{ url_for('production') }}" class="text-gray-400 hover:text-gray-600">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Add Production Record</h1>
+                <p class="text-gray-600 mt-1">Record daily production data</p>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form method="POST" class="space-y-6">
+            <!-- Date -->
+            <div>
+                <label for="date" class="block text-sm font-medium text-gray-700 mb-2">
+                    Date <span class="text-red-500">*</span>
+                </label>
+                <input type="date" 
+                       id="date" 
+                       name="date" 
+                       required
+                       value="{{ datetime.now().strftime('%Y-%m-%d') }}"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+            </div>
+
+            <!-- Production Data -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Eggs Collected -->
+                <div>
+                    <label for="eggs_collected" class="block text-sm font-medium text-gray-700 mb-2">
+                        Eggs Collected <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-egg text-yellow-500"></i>
+                        </div>
+                        <input type="number" 
+                               id="eggs_collected" 
+                               name="eggs_collected" 
+                               min="0"
+                               required
+                               placeholder="0"
+                               class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+                </div>
+
+                <!-- Eggs Sold -->
+                <div>
+                    <label for="eggs_sold" class="block text-sm font-medium text-gray-700 mb-2">
+                        Eggs Sold <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-shopping-cart text-green-500"></i>
+                        </div>
+                        <input type="number" 
+                               id="eggs_sold" 
+                               name="eggs_sold" 
+                               min="0"
+                               required
+                               placeholder="0"
+                               class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue and Mortality -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Revenue -->
+                <div>
+                    <label for="revenue" class="block text-sm font-medium text-gray-700 mb-2">
+                        Revenue (₦) <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500">₦</span>
+                        </div>
+                        <input type="number" 
+                               id="revenue" 
+                               name="revenue" 
+                               min="0"
+                               step="0.01"
+                               required
+                               placeholder="0.00"
+                               class="pl-8 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+                </div>
+
+                <!-- Mortality Count -->
+                <div>
+                    <label for="mortality_count" class="block text-sm font-medium text-gray-700 mb-2">
+                        Mortality Count
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-skull-crossbones text-red-500"></i>
+                        </div>
+                        <input type="number" 
+                               id="mortality_count" 
+                               name="mortality_count" 
+                               min="0"
+                               value="0"
+                               placeholder="0"
+                               class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Calculations -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="text-sm font-medium text-gray-700 mb-3">Quick Calculations</h3>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <span class="text-gray-600">Price per egg:</span>
+                        <span id="price-per-egg" class="font-semibold text-gray-900 ml-2">₦0.00</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600">Unsold eggs:</span>
+                        <span id="unsold-eggs" class="font-semibold text-gray-900 ml-2">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex space-x-4 pt-6">
+                <button type="submit" 
+                        class="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+                    <i class="fas fa-save mr-2"></i>
+                    Save Production Record
+                </button>
+                
+                <a href="{{ url_for('production') }}" 
+                   class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-center">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const eggsCollected = document.getElementById('eggs_collected');
+    const eggsSold = document.getElementById('eggs_sold');
+    const revenue = document.getElementById('revenue');
+    const pricePerEgg = document.getElementById('price-per-egg');
+    const unsoldEggs = document.getElementById('unsold-eggs');
+
+    function updateCalculations() {
+        const collected = parseInt(eggsCollected.value) || 0;
+        const sold = parseInt(eggsSold.value) || 0;
+        const rev = parseFloat(revenue.value) || 0;
+
+        // Calculate price per egg
+        const price = sold > 0 ? (rev / sold) : 0;
+        pricePerEgg.textContent = `₦${price.toFixed(2)}`;
+
+        // Calculate unsold eggs
+        const unsold = Math.max(0, collected - sold);
+        unsoldEggs.textContent = unsold;
+
+        // Validate that sold doesn't exceed collected
+        if (sold > collected && collected > 0) {
+            eggsSold.setCustomValidity('Eggs sold cannot exceed eggs collected');
+        } else {
+            eggsSold.setCustomValidity('');
+        }
+    }
+
+    eggsCollected.addEventListener('input', updateCalculations);
+    eggsSold.addEventListener('input', updateCalculations);
+    revenue.addEventListener('input', updateCalculations);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,279 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Poultry Farm Management{% endblock %}</title>
+
+    <!-- External Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Custom CSS Variables & Styling -->
+    <style>
+        :root {
+            --primary-green: #4CAF50;
+            --secondary-green: #388E3C;
+            --light-green: #C8E6C9;
+            --brown: #8D6E63;
+            --soft-blue: #81C784;
+        }
+
+        .bg-primary { background-color: var(--primary-green); }
+        .bg-secondary { background-color: var(--secondary-green); }
+        .bg-light-green { background-color: var(--light-green); }
+        .text-primary { color: var(--primary-green); }
+        .text-secondary { color: var(--secondary-green); }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 4rem;
+        }
+
+        .nav-item {
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 0.5rem;
+        }
+
+        .bg-gradient-green {
+            background: linear-gradient(135deg, #4CAF50, #388E3C);
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .form-input {
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .loading-spinner {
+            display: none;
+        }
+
+        .loading .loading-spinner {
+            display: inline-block;
+        }
+
+        .notification {
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 1000;
+                height: 100vh;
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
+
+    <!-- 🔗 Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Mobile menu overlay -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar fixed left-0 top-0 w-64 h-full bg-gradient-green text-white z-50">
+        <div class="p-6 border-b border-white border-opacity-20">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-egg text-2xl"></i>
+                <div class="sidebar-text">
+                    <h1 class="text-xl font-bold">FarmTracker</h1>
+                    {% if session.farm_name %}
+                    <p class="text-sm opacity-80">{{ session.farm_name }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <nav class="mt-8">
+            <div class="px-4 space-y-2">
+                <a href="{{ url_for('dashboard') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <i class="fas fa-chart-line text-lg"></i>
+                    <span class="sidebar-text">Dashboard</span>
+                </a>
+                <a href="{{ url_for('livestock') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <i class="fas fa-dove text-lg"></i>
+                    <span class="sidebar-text">Livestock</span>
+                </a>
+                <a href="{{ url_for('health') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <i class="fas fa-heartbeat text-lg"></i>
+                    <span class="sidebar-text">Health</span>
+                </a>
+                <a href="{{ url_for('feed') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <i class="fas fa-seedling text-lg"></i>
+                    <span class="sidebar-text">Feed & Inventory</span>
+                </a>
+                <a href="{{ url_for('production') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <i class="fas fa-egg text-lg"></i>
+                    <span class="sidebar-text">Production</span>
+                </a>
+                <a href="{{ url_for('financial') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <i class="fas fa-dollar-sign text-lg"></i>
+                    <span class="sidebar-text">Financial</span>
+                </a>
+                <a href="{{ url_for('notifications') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <i class="fas fa-bell text-lg"></i>
+                    <span class="sidebar-text">Notifications</span>
+                </a>
+                <a href="{{ url_for('settings') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <i class="fas fa-cog text-lg"></i>
+                    <span class="sidebar-text">Settings</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-white border-opacity-20">
+            <a href="{{ url_for('logout') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-red-200 hover:text-red-100">
+                <i class="fas fa-sign-out-alt text-lg"></i>
+                <span class="sidebar-text">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content ml-64 min-h-screen">
+        <!-- Top Navigation -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button id="mobile-menu-btn" class="md:hidden text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <button id="sidebar-toggle" class="hidden md:block text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-bars text-lg"></i>
+                    </button>
+                    <h2 class="text-xl font-semibold text-gray-800">{% block page_title %}Dashboard{% endblock %}</h2>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-user-circle text-2xl"></i>
+                            <span class="hidden md:inline-block">Profile</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="fixed top-4 right-4 z-50 space-y-2">
+                    {% for category, message in messages %}
+                        <div class="notification px-6 py-4 rounded-lg shadow-lg {% if category == 'error' %}bg-red-500{% elif category == 'success' %}bg-green-500{% else %}bg-blue-500{% endif %} text-white">
+                            <div class="flex items-center justify-between">
+                                <span>{{ message }}</span>
+                                <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Page Content -->
+        <div class="p-6">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- 🔧 Inline JS -->
+    <script>
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileOverlay = document.getElementById('mobile-overlay');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+
+        mobileMenuBtn?.addEventListener('click', () => {
+            sidebar.classList.toggle('mobile-open');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay?.addEventListener('click', () => {
+            sidebar.classList.remove('mobile-open');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        sidebarToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            const mainContent = document.querySelector('.main-content');
+            if (sidebar.classList.contains('collapsed')) {
+                mainContent.style.marginLeft = '4rem';
+            } else {
+                mainContent.style.marginLeft = '16rem';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const notifications = document.querySelectorAll('.notification');
+            notifications.forEach(notification => {
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => notification.remove(), 300);
+                }, 5000);
+            });
+        });
+
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function() {
+                const submitBtn = this.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.classList.add('loading');
+                    submitBtn.disabled = true;
+                }
+            });
+        });
+    </script>
+
+    <!-- ✅ Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
