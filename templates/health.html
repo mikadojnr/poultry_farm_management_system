@@ -1,4 +1,3 @@
-<!-- templates/health.html -->
 {% extends "base.html" %}
 {% block page_title %}Health Management{% endblock %}
 {% block content %}
@@ -28,7 +27,7 @@
                 </div>
                 <div>
                     <h3 class="font-semibold text-red-900">Critical</h3>
-                    <p class="text-sm text-red-700">2 birds need immediate attention</p>
+                    <p class="text-sm text-red-700">{{ critical_count }} birds need immediate attention</p>
                 </div>
             </div>
         </div>
@@ -40,7 +39,7 @@
                 </div>
                 <div>
                     <h3 class="font-semibold text-yellow-900">Due Soon</h3>
-                    <p class="text-sm text-yellow-700">5 vaccinations due this week</p>
+                    <p class="text-sm text-yellow-700">{{ due_soon_count }} vaccinations due this week</p>
                 </div>
             </div>
         </div>
@@ -52,7 +51,7 @@
                 </div>
                 <div>
                     <h3 class="font-semibold text-green-900">Healthy</h3>
-                    <p class="text-sm text-green-700">85% of flock is healthy</p>
+                    <p class="text-sm text-green-700">{{ healthy_percentage }}% of flock is healthy</p>
                 </div>
             </div>
         </div>
@@ -114,17 +113,22 @@
                             {{ health_record.treatment_date.strftime('%Y-%m-%d') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                                Completed
+                            <span class="px-2 py-1 {{ 'bg-green-100 text-green-800' if health_record.status == 'completed' else 'bg-yellow-100 text-yellow-800' if health_record.status == 'ongoing' else 'bg-blue-100 text-blue-800' if health_record.status == 'scheduled' else 'bg-red-100 text-red-800' }} text-xs font-medium rounded-full">
+                                {{ health_record.status|capitalize }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button class="text-green-600 hover:text-green-900 mr-3">
+                            <a href="{{ url_for('view_livestock', id=livestock.id) }}" class="text-green-600 hover:text-green-900 mr-3">
                                 <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="text-blue-600 hover:text-blue-900">
+                            </a>
+                            <a href="{{ url_for('edit_health_record', health_id=health_record.id) }}" class="text-blue-600 hover:text-blue-900 mr-3">
                                 <i class="fas fa-edit"></i>
-                            </button>
+                            </a>
+                            <form action="{{ url_for('delete_health_record', health_id=health_record.id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this health record?');">
+                                <button type="submit" class="text-red-600 hover:text-red-900">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}
@@ -153,37 +157,36 @@
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Upcoming Vaccination Schedule</h2>
         
         <div class="space-y-4">
-            <div class="flex items-center justify-between p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            {% for health_record in upcoming_vaccinations %}
+            <div class="flex items-center justify-between p-4 {{ 'bg-yellow-50 border-yellow-200' if health_record.next_checkup.date() == today else 'bg-blue-50 border-blue-200' }} border rounded-lg">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-syringe text-yellow-600"></i>
+                    <div class="w-10 h-10 {{ 'bg-yellow-100' if health_record.next_checkup.date() == today else 'bg-blue-100' }} rounded-full flex items-center justify-center">
+                        <i class="fas fa-syringe {{ 'text-yellow-600' if health_record.next_checkup.date() == today else 'text-blue-600' }}"></i>
                     </div>
                     <div>
-                        <h4 class="font-medium text-gray-900">Newcastle Disease Vaccine</h4>
-                        <p class="text-sm text-gray-600">Due for batch PL-001 to PL-015</p>
+                        <h4 class="font-medium text-gray-900">{{ health_record.treatment_type }}</h4>
+                        <p class="text-sm text-gray-600">
+                            For {{ db.session.query(Livestock).filter_by(id=health_record.livestock_id).first().livestock_id }}
+                        </p>
                     </div>
                 </div>
                 <div class="text-right">
-                    <p class="text-sm font-medium text-gray-900">Due: Tomorrow</p>
-                    <button class="text-sm text-green-600 hover:text-green-800">Mark as done</button>
+                    <p class="text-sm font-medium text-gray-900">
+                        Due: {{ health_record.next_checkup.strftime('%Y-%m-%d') }}
+                    </p>
+                    <a href="{{ url_for('edit_health_record', health_id=health_record.id) }}" 
+                       class="text-sm text-green-600 hover:text-green-800">
+                        {{ 'Mark as done' if health_record.next_checkup.date() == today else 'Schedule' }}
+                    </a>
                 </div>
             </div>
+            {% endfor %}
             
-            <div class="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-syringe text-blue-600"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-medium text-gray-900">Fowl Pox Vaccine</h4>
-                        <p class="text-sm text-gray-600">Due for batch PL-016 to PL-030</p>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <p class="text-sm font-medium text-gray-900">Due: In 3 days</p>
-                    <button class="text-sm text-green-600 hover:text-green-800">Schedule</button>
-                </div>
+            {% if not upcoming_vaccinations %}
+            <div class="text-center p-6">
+                <p class="text-gray-500">No upcoming vaccinations scheduled</p>
             </div>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -1,4 +1,3 @@
-<!-- templates/settings.html -->
 {% extends "base.html" %}
 {% block page_title %}Settings{% endblock %}
 {% block content %}
@@ -15,7 +14,8 @@
     <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         <h2 class="text-lg font-semibold text-gray-900 mb-6">Profile Information</h2>
         
-        <form method="POST" action="{{ url_for('settings') }}" class="space-y-6">
+        <form method="POST" action="{{ url_for('settings') }}" class="space-y-6" id="profile-form">
+            <input type="hidden" name="action" value="update_profile">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="full_name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
@@ -55,7 +55,7 @@
     <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         <h2 class="text-lg font-semibold text-gray-900 mb-6">Change Password</h2>
         
-        <form method="POST" action="{{ url_for('settings') }}" class="space-y-6">
+        <form method="POST" action="{{ url_for('settings') }}" class="space-y-6" id="password-form">
             <input type="hidden" name="action" value="change_password">
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -91,59 +91,65 @@
     <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         <h2 class="text-lg font-semibold text-gray-900 mb-6">Farm Preferences</h2>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Units -->
-            <div>
-                <h3 class="text-sm font-medium text-gray-900 mb-4">Measurement Units</h3>
-                <div class="space-y-3">
-                    <div>
-                        <label class="block text-sm text-gray-700 mb-2">Weight Unit</label>
-                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="kg">Kilograms (kg)</option>
-                            <option value="lbs">Pounds (lbs)</option>
-                        </select>
+        <form method="POST" action="{{ url_for('settings') }}" class="space-y-6" id="preferences-form">
+            <input type="hidden" name="action" value="save_preferences">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Units -->
+                <div>
+                    <h3 class="text-sm font-medium text-gray-900 mb-4">Measurement Units</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm text-gray-700 mb-2">Weight Unit</label>
+                            <select name="weight_unit" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="kg" {% if preferences.weight_unit == 'kg' %}selected{% endif %}>Kilograms (kg)</option>
+                                <option value="lbs" {% if preferences.weight_unit == 'lbs' %}selected{% endif %}>Pounds (lbs)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm text-gray-700 mb-2">Currency</label>
+                            <select name="currency" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="NGN" {% if preferences.currency == 'NGN' %}selected{% endif %}>Nigerian Naira (₦)</option>
+                                <option value="USD" {% if preferences.currency == 'USD' %}selected{% endif %}>US Dollar ($)</option>
+                                <option value="EUR" {% if preferences.currency == 'EUR' %}selected{% endif %}>Euro (€)</option>
+                                <option value="GBP" {% if preferences.currency == 'GBP' %}selected{% endif %}>British Pound (£)</option>
+                            </select>
+                        </div>
                     </div>
-                    
-                    <div>
-                        <label class="block text-sm text-gray-700 mb-2">Currency</label>
-                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="NGN">Nigerian Naira (₦)</option>
-                            <option value="USD">US Dollar ($)</option>
-                            <option value="EUR">Euro (€)</option>
-                            <option value="GBP">British Pound (£)</option>
-                        </select>
+                </div>
+                
+                <!-- Notifications -->
+                <div>
+                    <h3 class="text-sm font-medium text-gray-900 mb-4">Notification Preferences</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="email_notifications" {% if preferences.email_notifications %}checked{% endif %} 
+                                   class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-700">Email notifications</span>
+                        </label>
+                        
+                        <label class="flex items-center">
+                            <input type="checkbox" name="sms_notifications" {% if preferences.sms_notifications %}checked{% endif %} 
+                                   class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-700">SMS notifications</span>
+                        </label>
+                        
+                        <label class="flex items-center">
+                            <input type="checkbox" name="dashboard_alerts" {% if preferences.dashboard_alerts %}checked{% endif %} 
+                                   class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-700">Dashboard alerts</span>
+                        </label>
                     </div>
                 </div>
             </div>
             
-            <!-- Notifications -->
-            <div>
-                <h3 class="text-sm font-medium text-gray-900 mb-4">Notification Preferences</h3>
-                <div class="space-y-3">
-                    <label class="flex items-center">
-                        <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                        <span class="ml-2 text-sm text-gray-700">Email notifications</span>
-                    </label>
-                    
-                    <label class="flex items-center">
-                        <input type="checkbox" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                        <span class="ml-2 text-sm text-gray-700">SMS notifications</span>
-                    </label>
-                    
-                    <label class="flex items-center">
-                        <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                        <span class="ml-2 text-sm text-gray-700">Dashboard alerts</span>
-                    </label>
-                </div>
+            <div class="mt-6 pt-6 border-t border-gray-200 flex justify-end">
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-save mr-2"></i>
+                    Save Preferences
+                </button>
             </div>
-        </div>
-        
-        <div class="mt-6 pt-6 border-t border-gray-200 flex justify-end">
-            <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                <i class="fas fa-save mr-2"></i>
-                Save Preferences
-            </button>
-        </div>
+        </form>
     </div>
 
     <!-- Data Management -->
@@ -156,10 +162,12 @@
                     <i class="fas fa-download text-blue-600"></i>
                 </div>
                 <h3 class="text-sm font-medium text-gray-900 mb-2">Export Data</h3>
-                <p class="text-xs text-gray-500 mb-3">Download your farm data as CSV or PDF reports</p>
-                <button class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
-                    Export Data
-                </button>
+                <p class="text-xs text-gray-500 mb-3">Download your farm data as CSV</p>
+                <form method="POST" action="{{ url_for('export_data') }}">
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+                        Export Data
+                    </button>
+                </form>
             </div>
             
             <div class="text-center p-4 border border-gray-200 rounded-lg">
@@ -168,9 +176,11 @@
                 </div>
                 <h3 class="text-sm font-medium text-gray-900 mb-2">Backup Data</h3>
                 <p class="text-xs text-gray-500 mb-3">Create a backup of all your farm records</p>
-                <button class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors">
-                    Create Backup
-                </button>
+                <form method="POST" action="{{ url_for('create_backup') }}">
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors">
+                        Create Backup
+                    </button>
+                </form>
             </div>
             
             <div class="text-center p-4 border border-red-200 rounded-lg">
@@ -179,10 +189,13 @@
                 </div>
                 <h3 class="text-sm font-medium text-gray-900 mb-2">Delete Account</h3>
                 <p class="text-xs text-gray-500 mb-3">Permanently delete your account and all data</p>
-                <button class="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors" 
-                        onclick="confirmDelete()">
-                    Delete Account
-                </button>
+                <form method="POST" action="{{ url_for('delete_account') }}" id="delete-account-form">
+                    <input type="text" name="confirm" placeholder="Type DELETE to confirm" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-3 text-center">
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors">
+                        Delete Account
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -196,17 +209,17 @@
                 <div class="space-y-3">
                     <div class="flex justify-between">
                         <span class="text-sm text-gray-600">Account Created:</span>
-                        <span class="text-sm font-medium text-gray-900">{{ user.created_at.strftime('%B %d, %Y') }}</span>
+                        <span class="text-sm font-medium text-gray-900">{{ user.created_at.strftime('%B %d, %Y') if user.created_at else 'N/A' }}</span>
                     </div>
                     
                     <div class="flex justify-between">
                         <span class="text-sm text-gray-600">Last Login:</span>
-                        <span class="text-sm font-medium text-gray-900">{{ moment().format('MMMM DD, YYYY') }}</span>
+                        <span class="text-sm font-medium text-gray-900">{{ user.last_login.strftime('%B %d, %Y %H:%M:%S') if user.last_login else 'N/A' }}</span>
                     </div>
                     
                     <div class="flex justify-between">
                         <span class="text-sm text-gray-600">Storage Used:</span>
-                        <span class="text-sm font-medium text-gray-900">2.5 MB of 100 MB</span>
+                        <span class="text-sm font-medium text-gray-900">{{ '%.2f' % storage_usage }} MB of 100 MB</span>
                     </div>
                 </div>
             </div>
@@ -234,13 +247,98 @@
 </div>
 
 <script>
-function confirmDelete() {
-    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-        if (confirm('This will permanently delete all your farm data. Are you absolutely sure?')) {
-            // Add delete account functionality here
-            alert('Account deletion functionality would be implemented here.');
-        }
-    }
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg text-white z-50 ${
+        type === 'success' ? 'bg-green-500' : 
+        type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+    }`;
+    toast.innerHTML = `
+        <div class="flex items-center justify-between">
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Profile form validation
+    const profileForm = document.getElementById('profile-form');
+    if (profileForm) {
+        profileForm.addEventListener('submit', function(e) {
+            const fullName = document.getElementById('full_name').value;
+            const farmName = document.getElementById('farm_name').value;
+            const email = document.getElementById('email').value;
+            const location = document.getElementById('location').value;
+            
+            if (!fullName || !farmName || !email || !location) {
+                e.preventDefault();
+                showToast('All profile fields are required.', 'error');
+            }
+        });
+    }
+    
+    // Password form validation
+    const passwordForm = document.getElementById('password-form');
+    if (passwordForm) {
+        passwordForm.addEventListener('submit', function(e) {
+            const currentPassword = document.getElementById('current_password').value;
+            const newPassword = document.getElementById('new_password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                e.preventDefault();
+                showToast('All password fields are required.', 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                e.preventDefault();
+                showToast('New passwords do not match.', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 8) {
+                e.preventDefault();
+                showToast('New password must be at least 8 characters long.', 'error');
+            }
+        });
+    }
+    
+    // Delete account form validation
+    const deleteAccountForm = document.getElementById('delete-account-form');
+    if (deleteAccountForm) {
+        deleteAccountForm.addEventListener('submit', function(e) {
+            const confirm = document.querySelector('input[name="confirm"]').value;
+            if (confirm !== 'DELETE') {
+                e.preventDefault();
+                showToast('Please type "DELETE" to confirm account deletion.', 'error');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                e.preventDefault();
+                return;
+            }
+            
+            if (!confirm('This will permanently delete all your farm data. Are you absolutely sure?')) {
+                e.preventDefault();
+            }
+        });
+    }
+    
+    // Show flash messages as toasts
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+        showToast('{{ message }}', '{{ category }}');
+    {% endfor %}
+});
 </script>
 {% endblock %}

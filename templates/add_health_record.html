@@ -1,12 +1,11 @@
-<!-- templates/add_health_record.html -->
 {% extends "base.html" %}
-{% block page_title %}Add Health Record{% endblock %}
+{% block page_title %}{{ 'Edit Health Record' if editing else 'Add Health Record' }}{% endblock %}
 {% block content %}
 <div class="max-w-2xl mx-auto">
     <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
         <div class="mb-8">
-            <h1 class="text-2xl font-bold text-gray-900">Add Health Record</h1>
-            <p class="text-gray-600 mt-1">Record treatment or health check details</p>
+            <h1 class="text-2xl font-bold text-gray-900">{{ 'Edit Health Record' if editing else 'Add Health Record' }}</h1>
+            <p class="text-gray-600 mt-1">{{ 'Update treatment or health check details' if editing else 'Record treatment or health check details' }}</p>
         </div>
         
         <form method="POST" class="space-y-6">
@@ -18,7 +17,7 @@
                         class="form-select w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     <option value="">Choose livestock...</option>
                     {% for livestock in livestock_list %}
-                    <option value="{{ livestock.id }}">{{ livestock.livestock_id }} - {{ livestock.breed }}</option>
+                    <option value="{{ livestock.id }}" {{ 'selected' if editing and health_record.livestock_id == livestock.id }}>{{ livestock.livestock_id }} - {{ livestock.breed }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -31,15 +30,9 @@
                     <select id="treatment_type" name="treatment_type" required
                             class="form-select w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                         <option value="">Select treatment type</option>
-                        <option value="Vaccination">Vaccination</option>
-                        <option value="Deworming">Deworming</option>
-                        <option value="Antibiotics">Antibiotics</option>
-                        <option value="Vitamins">Vitamins</option>
-                        <option value="First Aid">First Aid</option>
-                        <option value="Surgery">Surgery</option>
-                        <option value="Health Check">Health Check</option>
-                        <option value="Quarantine">Quarantine</option>
-                        <option value="Other">Other</option>
+                        {% for type in ['Vaccination', 'Deworming', 'Antibiotics', 'Vitamins', 'First Aid', 'Surgery', 'Health Check', 'Quarantine', 'Other'] %}
+                        <option value="{{ type }}" {{ 'selected' if editing and health_record.treatment_type == type }}>{{ type }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 
@@ -48,7 +41,7 @@
                         Treatment Date <span class="text-red-500">*</span>
                     </label>
                     <input type="date" id="treatment_date" name="treatment_date" 
-                           value="{{ datetime.now().strftime('%Y-%m-%d') }}" required
+                           value="{{ treatment_date if editing else datetime.now().strftime('%Y-%m-%d') }}" required
                            class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                 </div>
             </div>
@@ -59,6 +52,7 @@
                         Medication/Vaccine
                     </label>
                     <input type="text" id="medication" name="medication"
+                           value="{{ health_record.medication if editing and health_record.medication else '' }}"
                            class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                            placeholder="e.g., Newcastle vaccine, Amoxicillin">
                 </div>
@@ -68,6 +62,7 @@
                         Dosage
                     </label>
                     <input type="text" id="dosage" name="dosage"
+                           value="{{ health_record.dosage if editing and health_record.dosage else '' }}"
                            class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                            placeholder="e.g., 0.5ml, 2 tablets">
                 </div>
@@ -79,6 +74,7 @@
                         Administered By
                     </label>
                     <input type="text" id="administered_by" name="administered_by"
+                           value="{{ health_record.administered_by if editing and health_record.administered_by else '' }}"
                            class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                            placeholder="e.g., Dr. Smith, Farm Manager">
                 </div>
@@ -88,6 +84,7 @@
                         Cost (₦)
                     </label>
                     <input type="number" id="cost" name="cost" step="0.01" min="0"
+                           value="{{ health_record.cost if editing else '0.00' }}"
                            class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                            placeholder="0.00">
                 </div>
@@ -99,7 +96,7 @@
                 </label>
                 <textarea id="symptoms" name="symptoms" rows="3"
                           class="form-textarea w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                          placeholder="Describe any symptoms or observations..."></textarea>
+                          placeholder="Describe any symptoms or observations...">{{ health_record.symptoms if editing and health_record.symptoms else '' }}</textarea>
             </div>
             
             <div>
@@ -108,7 +105,7 @@
                 </label>
                 <textarea id="vet_notes" name="vet_notes" rows="4"
                           class="form-textarea w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                          placeholder="Treatment notes, follow-up instructions, etc."></textarea>
+                          placeholder="Treatment notes, follow-up instructions, etc.">{{ health_record.vet_notes if editing and health_record.vet_notes else '' }}</textarea>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -117,6 +114,7 @@
                         Next Checkup Date
                     </label>
                     <input type="date" id="next_checkup" name="next_checkup"
+                           value="{{ next_checkup if editing and next_checkup else '' }}"
                            class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                 </div>
                 
@@ -126,10 +124,9 @@
                     </label>
                     <select id="status" name="status"
                             class="form-select w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                        <option value="completed" selected>Completed</option>
-                        <option value="ongoing">Ongoing</option>
-                        <option value="scheduled">Scheduled</option>
-                        <option value="cancelled">Cancelled</option>
+                        {% for status in ['completed', 'ongoing', 'scheduled', 'cancelled'] %}
+                        <option value="{{ status }}" {{ 'selected' if editing and health_record.status == status }}>{{ status|capitalize }}</option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
@@ -141,8 +138,8 @@
                 </a>
                 <button type="submit" 
                         class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                    <i class="fas fa-plus mr-2"></i>
-                    Add Health Record
+                    <i class="fas fa-{{ 'save' if editing else 'plus' }} mr-2"></i>
+                    {{ 'Update Health Record' if editing else 'Add Health Record' }}
                 </button>
             </div>
         </form>

@@ -1,6 +1,11 @@
-<!-- templates/add_financial_record.html -->
 {% extends "base.html" %}
-{% block page_title %}Add Financial Record{% endblock %}
+{% block page_title %}
+    {% if editing %}
+        Edit Financial Record
+    {% else %}
+        Add Financial Record
+    {% endif %}
+{% endblock %}
 {% block content %}
 <div class="max-w-2xl mx-auto">
     <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
@@ -10,13 +15,32 @@
                 <i class="fas fa-arrow-left text-xl"></i>
             </a>
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Add Financial Record</h1>
+                <h1 class="text-2xl font-bold text-gray-900">
+                    {% if editing %}
+                        Edit Financial Record
+                    {% else %}
+                        Add Financial Record
+                    {% endif %}
+                </h1>
                 <p class="text-gray-600 mt-1">Record income or expense transaction</p>
             </div>
         </div>
 
         <!-- Form -->
         <form method="POST" class="space-y-6">
+            <!-- Date -->
+            <div>
+                <label for="date" class="block text-sm font-medium text-gray-700 mb-2">
+                    Date <span class="text-red-500">*</span>
+                </label>
+                <input type="date" 
+                       id="date" 
+                       name="date" 
+                       required
+                       value="{% if editing and financial.date %}{{ financial.date.strftime('%Y-%m-%d') }}{% else %}{{ datetime.now().strftime('%Y-%m-%d') }}{% endif %}"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
             <!-- Transaction Type -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-3">
@@ -24,7 +48,12 @@
                 </label>
                 <div class="grid grid-cols-2 gap-4">
                     <label class="relative">
-                        <input type="radio" name="type" value="income" required class="sr-only peer">
+                        <input type="radio" 
+                               name="type" 
+                               value="income" 
+                               required 
+                               {% if editing and financial.type == 'income' %}checked{% endif %}
+                               class="sr-only peer">
                         <div class="border-2 border-gray-300 rounded-lg p-4 cursor-pointer peer-checked:border-green-500 peer-checked:bg-green-50 hover:bg-gray-50 transition-colors">
                             <div class="flex items-center space-x-3">
                                 <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
@@ -39,7 +68,12 @@
                     </label>
                     
                     <label class="relative">
-                        <input type="radio" name="type" value="expense" required class="sr-only peer">
+                        <input type="radio" 
+                               name="type" 
+                               value="expense" 
+                               required 
+                               {% if editing and financial.type == 'expense' %}checked{% endif %}
+                               class="sr-only peer">
                         <div class="border-2 border-gray-300 rounded-lg p-4 cursor-pointer peer-checked:border-red-500 peer-checked:bg-red-50 hover:bg-gray-50 transition-colors">
                             <div class="flex items-center space-x-3">
                                 <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
@@ -67,25 +101,25 @@
                     <option value="">Select category</option>
                     
                     <!-- Income Categories -->
-                    <optgroup label="Income Categories" id="income-categories" style="display: none;">
-                        <option value="sales">Egg Sales</option>
-                        <option value="poultry-sales">Poultry Sales</option>
-                        <option value="consultation">Consultation Fees</option>
-                        <option value="grants">Grants/Subsidies</option>
-                        <option value="other-income">Other Income</option>
+                    <optgroup label="Income Categories" id="income-categories" style="display: {% if editing and financial.type == 'income' %}block{% else %}none{% endif %}">
+                        <option value="sales" {% if editing and financial.category == 'sales' %}selected{% endif %}>Egg Sales</option>
+                        <option value="poultry-sales" {% if editing and financial.category == 'poultry-sales' %}selected{% endif %}>Poultry Sales</option>
+                        <option value="consultation" {% if editing and financial.category == 'consultation' %}selected{% endif %}>Consultation Fees</option>
+                        <option value="grants" {% if editing and financial.category == 'grants' %}selected{% endif %}>Grants/Subsidies</option>
+                        <option value="other-income" {% if editing and financial.category == 'other-income' %}selected{% endif %}>Other Income</option>
                     </optgroup>
                     
                     <!-- Expense Categories -->
-                    <optgroup label="Expense Categories" id="expense-categories" style="display: none;">
-                        <option value="feed">Feed Purchase</option>
-                        <option value="medication">Medication/Veterinary</option>
-                        <option value="equipment">Equipment</option>
-                        <option value="utilities">Utilities</option>
-                        <option value="labor">Labor Costs</option>
-                        <option value="maintenance">Maintenance</option>
-                        <option value="transportation">Transportation</option>
-                        <option value="insurance">Insurance</option>
-                        <option value="other-expense">Other Expenses</option>
+                    <optgroup label="Expense Categories" id="expense-categories" style="display: {% if editing and financial.type == 'expense' %}block{% else %}none{% endif %}">
+                        <option value="feed" {% if editing and financial.category == 'feed' %}selected{% endif %}>Feed Purchase</option>
+                        <option value="medication" {% if editing and financial.category == 'medication' %}selected{% endif %}>Medication/Veterinary</option>
+                        <option value="equipment" {% if editing and financial.category == 'equipment' %}selected{% endif %}>Equipment</option>
+                        <option value="utilities" {% if editing and financial.category == 'utilities' %}selected{% endif %}>Utilities</option>
+                        <option value="labor" {% if editing and financial.category == 'labor' %}selected{% endif %}>Labor Costs</option>
+                        <option value="maintenance" {% if editing and financial.category == 'maintenance' %}selected{% endif %}>Maintenance</option>
+                        <option value="transportation" {% if editing and financial.category == 'transportation' %}selected{% endif %}>Transportation</option>
+                        <option value="insurance" {% if editing and financial.category == 'insurance' %}selected{% endif %}>Insurance</option>
+                        <option value="other-expense" {% if editing and financial.category == 'other-expense' %}selected{% endif %}>Other Expenses</option>
                     </optgroup>
                 </select>
             </div>
@@ -105,6 +139,7 @@
                            min="0.01"
                            step="0.01"
                            required
+                           value="{% if editing %}{{ '%.2f' % financial.amount }}{% else %}0.00{% endif %}"
                            placeholder="0.00"
                            class="pl-8 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
@@ -119,7 +154,7 @@
                           name="description" 
                           rows="3"
                           placeholder="Add details about this transaction..."
-                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"></textarea>
+                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none">{% if editing %}{{ financial.description or '' }}{% endif %}</textarea>
             </div>
 
             <!-- Quick Templates -->
@@ -162,7 +197,11 @@
                 <button type="submit" 
                         class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
                     <i class="fas fa-save mr-2"></i>
-                    Save Financial Record
+                    {% if editing %}
+                        Update Financial Record
+                    {% else %}
+                        Save Financial Record
+                    {% endif %}
                 </button>
                 
                 <a href="{{ url_for('financial') }}" 
@@ -216,6 +255,14 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('description').value = description;
         });
     });
+
+    // Trigger category visibility on page load for edit mode
+    {% if editing %}
+        const selectedType = document.querySelector('input[name="type"]:checked');
+        if (selectedType) {
+            selectedType.dispatchEvent(new Event('change'));
+        }
+    {% endif %}
 });
 </script>
 {% endblock %}

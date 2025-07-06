@@ -1,6 +1,11 @@
-<!-- templates/add_production_record.html -->
 {% extends "base.html" %}
-{% block page_title %}Add Production Record{% endblock %}
+{% block page_title %}
+    {% if editing %}
+        Edit Production Record
+    {% else %}
+        Add Production Record
+    {% endif %}
+{% endblock %}
 {% block content %}
 <div class="max-w-2xl mx-auto">
     <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
@@ -10,7 +15,13 @@
                 <i class="fas fa-arrow-left text-xl"></i>
             </a>
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Add Production Record</h1>
+                <h1 class="text-2xl font-bold text-gray-900">
+                    {% if editing %}
+                        Edit Production Record
+                    {% else %}
+                        Add Production Record
+                    {% endif %}
+                </h1>
                 <p class="text-gray-600 mt-1">Record daily production data</p>
             </div>
         </div>
@@ -26,7 +37,7 @@
                        id="date" 
                        name="date" 
                        required
-                       value="{{ datetime.now().strftime('%Y-%m-%d') }}"
+                       value="{% if editing and production.date %}{{ production.date.strftime('%Y-%m-%d') }}{% else %}{{ datetime.now().strftime('%Y-%m-%d') }}{% endif %}"
                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
             </div>
 
@@ -46,6 +57,7 @@
                                name="eggs_collected" 
                                min="0"
                                required
+                               value="{% if editing %}{{ production.eggs_collected }}{% else %}0{% endif %}"
                                placeholder="0"
                                class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
                     </div>
@@ -65,6 +77,7 @@
                                name="eggs_sold" 
                                min="0"
                                required
+                               value="{% if editing %}{{ production.eggs_sold }}{% else %}0{% endif %}"
                                placeholder="0"
                                class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
                     </div>
@@ -88,6 +101,7 @@
                                min="0"
                                step="0.01"
                                required
+                               value="{% if editing %}{{ '%.2f' % production.revenue }}{% else %}0.00{% endif %}"
                                placeholder="0.00"
                                class="pl-8 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
                     </div>
@@ -106,7 +120,7 @@
                                id="mortality_count" 
                                name="mortality_count" 
                                min="0"
-                               value="0"
+                               value="{% if editing %}{{ production.mortality_count }}{% else %}0{% endif %}"
                                placeholder="0"
                                class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
                     </div>
@@ -133,7 +147,11 @@
                 <button type="submit" 
                         class="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
                     <i class="fas fa-save mr-2"></i>
-                    Save Production Record
+                    {% if editing %}
+                        Update Production Record
+                    {% else %}
+                        Save Production Record
+                    {% endif %}
                 </button>
                 
                 <a href="{{ url_for('production') }}" 
@@ -158,15 +176,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const sold = parseInt(eggsSold.value) || 0;
         const rev = parseFloat(revenue.value) || 0;
 
-        // Calculate price per egg
         const price = sold > 0 ? (rev / sold) : 0;
         pricePerEgg.textContent = `₦${price.toFixed(2)}`;
-
-        // Calculate unsold eggs
         const unsold = Math.max(0, collected - sold);
         unsoldEggs.textContent = unsold;
 
-        // Validate that sold doesn't exceed collected
         if (sold > collected && collected > 0) {
             eggsSold.setCustomValidity('Eggs sold cannot exceed eggs collected');
         } else {
@@ -177,6 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
     eggsCollected.addEventListener('input', updateCalculations);
     eggsSold.addEventListener('input', updateCalculations);
     revenue.addEventListener('input', updateCalculations);
+    updateCalculations();
 });
 </script>
 {% endblock %}
