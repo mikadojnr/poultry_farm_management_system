@@ -1,5 +1,5 @@
 # app.py - Main Flask Application
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -8,8 +8,10 @@ import sqlite3
 import os
 from functools import wraps
 from flask_moment import Moment
-from flask import request, render_template, redirect, url_for, flash, session
 from sqlalchemy import func
+import shutil
+import io
+import csv
 
 
 
@@ -1237,7 +1239,7 @@ def create_backup():
     os.makedirs(backup_dir, exist_ok=True)
     backup_file = os.path.join(backup_dir, f'backup_user_{user_id}_{datetime.utcnow().strftime("%Y%m%d%H%M%S")}.db')
     
-    shutil.copyfile('poultry_farm.db', backup_file)
+    shutil.copyfile('instance/poultry_farm.db', backup_file)
     
     flash('Backup created successfully!', 'success')
     return redirect(url_for('settings'))
